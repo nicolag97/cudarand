@@ -82,7 +82,7 @@ int main(){
 	cudaEventSynchronize(stop);
 
 	float gpu_time = 0;
-	cudaEventElapsedTime(&milliseconds, start, stop);
+	cudaEventElapsedTime(&gpu_time, start, stop);
 
 	cudaFree(dev_gpu_unsignedNumbers);
 	cudaFree(dev_gpu_uniformNumbers);

@@ -55,8 +55,10 @@ int main(){
 	double *gpu_bimodalNumbers = new double[totalNumbersToGenerate];
 	
 	////////////// HOST-SIDE GENERATOR //////////////
+	clock_t begin = clock();
 	RNGen_Host(numberOfBlocks, numberOfThreadsPerBlock, cpu_unsignedNumbers, cpu_uniformNumbers, cpu_gaussianNumbers, cpu_bimodalNumbers, totalNumbersToGenerate, numbersToGeneratePerThread, seed);
-
+	clock_t end = clock();
+  	double cpu_time = double(end - begin) / CLOCKS_PER_SEC;
 
 
 	////////////// DEVICE-SIDE GENERATOR //////////////
@@ -79,7 +81,7 @@ int main(){
 
 	cudaEventSynchronize(stop);
 
-	float milliseconds = 0;
+	float gpu_time = 0;
 	cudaEventElapsedTime(&milliseconds, start, stop);
 
 	cudaFree(dev_gpu_unsignedNumbers);
@@ -88,7 +90,8 @@ int main(){
 	cudaFree(dev_gpu_bimodalNumbers);
 
 	cout<<endl<<"############### TIMINGS ################";
-	cout<<endl<<"############### GPU:   "<<milliseconds;
+	cout<<endl<<"GPU:    "<<gpu_time<<" ms";
+	cout<<endl<<"CPU:    "<<cpu_time*1000<<" ms";
 	cout << endl << "############### OUTPUT NUMBERS ################" << endl;
 	
 	cout << endl << "CPU: " << endl;

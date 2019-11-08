@@ -22,6 +22,10 @@ bool AreSame(double, double);
 
 int main(){
 
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
+
 	unsigned int numberOfBlocks = 10;
 	unsigned int numberOfThreadsPerBlock = 512;
 	unsigned int totalNumberOfThreads = numberOfBlocks * numberOfThreadsPerBlock;
@@ -64,19 +68,27 @@ int main(){
 	cudaMalloc( (void **)&dev_gpu_gaussianNumbers, totalNumbersToGenerate*sizeof(double) );
 	cudaMalloc( (void **)&dev_gpu_bimodalNumbers, totalNumbersToGenerate*sizeof(double) );
 	
+	cudaEventRecord(start);
 	RNGen_Global<<<numberOfBlocks,numberOfThreadsPerBlock>>>(dev_gpu_unsignedNumbers, dev_gpu_uniformNumbers, dev_gpu_gaussianNumbers, dev_gpu_bimodalNumbers, totalNumbersToGenerate, numbersToGeneratePerThread, seed);
+	cudaEventRecord(stop);
 
 	cudaMemcpy(gpu_unsignedNumbers, dev_gpu_unsignedNumbers, totalNumbersToGenerate*sizeof(unsigned int), cudaMemcpyDeviceToHost);
 	cudaMemcpy(gpu_uniformNumbers, dev_gpu_uniformNumbers, totalNumbersToGenerate*sizeof(double), cudaMemcpyDeviceToHost);
 	cudaMemcpy(gpu_gaussianNumbers, dev_gpu_gaussianNumbers, totalNumbersToGenerate*sizeof(double), cudaMemcpyDeviceToHost);
 	cudaMemcpy(gpu_bimodalNumbers, dev_gpu_bimodalNumbers, totalNumbersToGenerate*sizeof(double), cudaMemcpyDeviceToHost);
 
+	cudaEventSynchronize(stop);
+
+	float milliseconds = 0;
+	cudaEventElapsedTime(&milliseconds, start, stop);
+
 	cudaFree(dev_gpu_unsignedNumbers);
 	cudaFree(dev_gpu_uniformNumbers);
 	cudaFree(dev_gpu_gaussianNumbers);
 	cudaFree(dev_gpu_bimodalNumbers);
 
-
+	cout<<endl<<"############### TIMINGS ################";
+	cout<<endl<<"############### GPU:   "<<milliseconds;
 	cout << endl << "############### OUTPUT NUMBERS ################" << endl;
 	
 	cout << endl << "CPU: " << endl;

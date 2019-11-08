@@ -29,7 +29,7 @@ int main(){
 	unsigned int numberOfBlocks = 10;
 	unsigned int numberOfThreadsPerBlock = 512;
 	unsigned int totalNumberOfThreads = numberOfBlocks * numberOfThreadsPerBlock;
-	unsigned int totalNumbersToGenerate = 5000000;
+	unsigned int totalNumbersToGenerate = 50000000;
 	
 	unsigned int seed;	
 	

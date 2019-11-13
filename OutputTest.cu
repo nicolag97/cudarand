@@ -1,8 +1,3 @@
-//
-//	OUTPUT & CPU/GPU COMPARISON TEST
-//
-//	Tests correct generation of pseudorandom numbers and compares CPU to GPU output with same seed.
-//
 
 #include <iostream>
 #include <ctime>
@@ -162,9 +157,11 @@ __global__ void RNGen_Global(unsigned int *unsignedNumbers, double *uniformNumbe
 
 __host__ __device__ void RNGen_HostDev(unsigned int *unsignedNumbers, double *uniformNumbers, double *gaussianNumbers, double *bimodalNumbers, unsigned int totalNumbersToGenerate, unsigned int numbersToGeneratePerThread, unsigned int seed, unsigned int threadNumber){
 	
-	RNG *supportGenerator = new RNG_Tausworthe(seed+threadNumber);
 	
-	RNG *generator = new RNG_CombinedGenerator;
+	RNG_Tausworthe supportGenerator_(seed+threadNumber);
+	RNG *supportGenerator = &supportGenerator_;
+	RNG_CombinedGenerator generator_();
+	RNG *generator = & generator_;
 	generator->SetInternalState(supportGenerator);
 	
 	unsigned int unsignedNumber;
